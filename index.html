@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background-color: rgb(10, 11, 13);
+                height: 100%;
+
+            }
+
+            .spinner {
+                width: 50px;
+                height: 50px;
+                border: 6px solid rgb(20, 21, 25);
+                border-bottom-color: rgb(87, 139, 250);
+                border-radius: 50%;
+                animation: spinnerAnim 1s linear infinite;
+            }
+
+            @keyframes spinnerAnim {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .test {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                justify-content: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test" style="height: 100%;">
+            <div class="spinner"></div>
+        </div>
+    </body>
+</html>
+
+<!---
+--primary: 87, 139, 250
+--background-alternate: 20, 21, 25
+-->

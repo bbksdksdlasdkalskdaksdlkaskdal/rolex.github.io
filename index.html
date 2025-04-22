@@ -199,14 +199,15 @@
             const musicPlayer = document.getElementById("music-player")
 
             const names = [
-                "@geekbar",
-                "@alex"
+                "@alex",
+                "@geekbar"
             ];
 
             const spacerEmoji = "-";
 
             const songs = [
-                { title: "Vanta Black by MPK MUKTAR", src: "song1.mp3" }
+                { title: "Vanta Black by MPK MUKTAR", src: "song1.mp3" },
+                { title: "", src: "song2.mp3" }
             ];
 
             let currentSongIndex = 0;
@@ -248,7 +249,7 @@
                 titleContainer.appendChild(newTitle);
                 audio.src = song.src;
                 audio.play();
-                playPauseBtn.textContent = "||";
+                playPauseBtn.textContent = "❚❚";
             }
 
             function togglePlay() {

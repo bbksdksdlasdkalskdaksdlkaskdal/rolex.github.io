@@ -1,52 +1,282 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset='utf-8'>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <style>
-            html, body {
-                margin: 0;
-                padding: 0;
-                background-color: rgb(10, 11, 13);
-                height: 100%;
-
-            }
-
-            .spinner {
-                width: 50px;
-                height: 50px;
-                border: 6px solid rgb(20, 21, 25);
-                border-bottom-color: rgb(87, 139, 250);
-                border-radius: 50%;
-                animation: spinnerAnim 1s linear infinite;
-            }
-
-            @keyframes spinnerAnim {
-                0% {
-                    transform: rotate(0deg);
-                }
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
-
-            .test {
-                display: flex;
-                align-items: center;
-                flex-direction: column;
-                justify-content: center;
-            }
-        </style>
+        <title>EpIc NiGGa BiO</title>
     </head>
+    <style>
+        html {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            background-color: #000000;
+        }
+        /* -------------------------------------------------- */
+        .next {
+            top: 50%;
+            left: 50%;
+            cursor: pointer;
+            color: #ffffff;
+            border: none;
+            background-color: transparent;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+            font-size: 15px;
+            font-family: consolas, sans-serif;
+        }
+
+        .next:hover {
+            color: #ffffff;
+            transform: translate(-50%, -50%) scale(1.02);
+            text-shadow: 0 0 10px #fff;
+        }
+
+        .next.animate-out {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+        /* -------------------------------------------------- */
+        .name-container {
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            font-family: consolas, sans-serif;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .name-container.show {
+            opacity: 1;
+        }
+        /* -------------------------------------------------- */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            font-family: consolas, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            width: 260px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .music-player.show {
+            opacity: 1;
+        }
+
+        .song-title-container {
+            width: 260px;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .song-title {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-title 10s linear infinite;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .controls button:hover {
+            transform: scale(1.2);
+        }
+
+        #volume-slider {
+            width: 100%;
+            appearance: none;
+            height: 5px;
+            border-radius: 5px;
+            background: #444;
+            outline: none;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        #volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        /* -------------------------------------------------- */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            0% {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -150%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes scroll-title {
+            0% {
+                transform: translateX(0%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
     <body>
-        <div class="test" style="height: 100%;">
-            <div class="spinner"></div>
+        <div class="music-player" id ="music-player">
+            <div class="song-title-container" id="title-container">
+                <div class="song-title" id="song-title">N/A</div>
+            </div>
+            <div class="controls">
+                <button onclick="prevSong()">«</button>
+                <button onclick="togglePlay()" id="play-pause">||</button>
+                <button onclick="nextSong()">»</button>
+            </div>
+            <input type="range" id="volume-slider" min="0" max="100" value="20"/>
         </div>
+
+        <button class="next" id="button">Enter the Void</button>
+        <div class="name-container" id="nameContainer"></div>
+
+        <audio loop id="audio-player" src=""></audio>
+
+        <script>
+            const button = document.getElementById('button');
+            const nameContainer = document.getElementById('nameContainer');
+            const audio = document.getElementById("audio-player");
+            const playPauseBtn = document.getElementById("play-pause");
+            const titleContainer = document.getElementById("title-container");
+            const volumeSlider = document.getElementById("volume-slider");
+            const musicPlayer = document.getElementById("music-player")
+
+            const names = [
+                "@tempname1",
+                "@tempname2",
+                "@tempname3"
+            ];
+
+            const spacerEmoji = "-";
+
+            const songs = [
+                { title: "Vanta Black by MPK MUKTAR", src: "song1.mp3" }
+            ];
+
+            let currentSongIndex = 0;
+
+            function addNames() {
+                names.forEach((name, index) => {
+                    const nameElement = document.createElement('div');
+                    nameElement.textContent = name;
+                    nameContainer.appendChild(nameElement);
+
+                    if (index < names.length - 1) {
+                        const spacerElement = document.createElement('div');
+                        spacerElement.textContent = spacerEmoji;
+                        nameContainer.appendChild(spacerElement);
+                    }
+                });
+                nameContainer.classList.add('show');
+                musicPlayer.classList.add('show')
+            }
+
+            button.addEventListener('click', function() {
+                button.classList.add('animate-out');
+                button.addEventListener('animationend', function() {
+                    button.remove();
+                    addNames();
+                    audio.play();
+                });
+            });
+
+            audio.volume = volumeSlider.value / 100;
+
+            function loadSong(index) {
+                const song = songs[index];
+                const newTitle = document.createElement("div");
+                newTitle.className = "song-title";
+                newTitle.id = "song-title";
+                newTitle.textContent = song.title;
+                titleContainer.innerHTML = "";
+                titleContainer.appendChild(newTitle);
+                audio.src = song.src;
+                audio.play();
+                playPauseBtn.textContent = "||";
+            }
+
+            function togglePlay() {
+                if (audio.paused) {
+                    audio.play();
+                    playPauseBtn.textContent = "||";
+                } else {
+                    audio.pause();
+                    playPauseBtn.textContent = "▷";
+                }
+            }
+
+            function nextSong() {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                loadSong(currentSongIndex);
+            }
+
+            function prevSong() {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                loadSong(currentSongIndex);
+            }
+
+            volumeSlider.addEventListener("input", () => {
+                audio.volume = volumeSlider.value / 100;
+            });
+
+            window.onload = () => loadSong(currentSongIndex);
+        </script>
     </body>
 </html>
-
-<!---
---primary: 87, 139, 250
---background-alternate: 20, 21, 25
--->
